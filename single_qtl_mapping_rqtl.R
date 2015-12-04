@@ -2,8 +2,8 @@
 # (Much of this code originates from rqtl.org tutorials.)              
 
 # Change these file paths to reflect your system:
-input_file_directory = "./"
-input_file_name_cross = "./R07018xR07020_genetic_map_with_phenotypes.csv"
+input_file_directory = file.path("./")
+input_file_name_cross = file.path("./R07018xR07020_genetic_map_with_phenotypes.csv")
 
 working_directory = getwd()
 if (!is.null(working_directory)) setwd(input_file_directory)
