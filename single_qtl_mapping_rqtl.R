@@ -1,4 +1,4 @@
-# Estimate QTL using Interval Mapping with R/qtl package
+# Estimate QTL using interval mapping with R/qtl package
 # (Much of this code originates from rqtl.org tutorials.)              
 
 # Change these file paths to reflect your system:
