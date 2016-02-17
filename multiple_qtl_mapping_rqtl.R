@@ -62,14 +62,13 @@ stepout2 = stepwiseqtl(cross_inputcross,
                         penalties=c(3.679856, 5.156491, 2.713436),  
                         qtl=init_qtl,          
                         formula=y~Q1+Q2,
-                        max.qtl=5,
+                        max.qtl=3,
                         scan.pairs=FALSE,
-                        refine.locations=TRUE,
+                        refine.locations=FALSE,
                         keeptrace=TRUE,
                         verbose=TRUE)
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<#
 ################################################################################
-
 phenotype_directory = paste0(phenotype, "_multiple_qtl_mapping_folder")
 dir.create(file.path(phenotype_directory))
 setwd(file.path(phenotype_directory))
@@ -82,13 +81,15 @@ model_plot_directory = "./model_plots"
 dir.create(file.path(model_plot_directory))
 setwd(file.path(model_plot_directory))
 
+i_models_in_row = 2
+i_models_in_columns = 1
+
 model_selection_i_file_name = paste0("models_",
                                      1,
                                      "-",
                                      (1+(i_models_in_row * i_models_in_columns)-1),
                                      ".png")
-i_models_in_row = 2
-i_models_in_columns = 1
+
 
 png(file = model_selection_i_file_name,  
     width = 6.5,
@@ -96,6 +97,7 @@ png(file = model_selection_i_file_name,
     units ="in", 
     res = 300, 
     bg = "white")
+
 par(mfrow=c(i_models_in_row,i_models_in_columns))
 
 i_models_in_image = 0
@@ -132,7 +134,7 @@ setwd("../")
 all_pLOD_model_file_name = paste0("pLOD_models_", phenotype, ".txt")
 sink(file = all_pLOD_model_file_name)
 cat("QTL models traversed with associated pLOD for phenotype: \n")
-cat(phenotype_mqm)
+cat(phenotype)
 cat("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n")
 print(thetrace)
 cat("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n")
@@ -141,7 +143,7 @@ sink()
 ################################################################################
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>#
 # Choose a model to examine from "pLOD_models_file"
-# Refine QTL positions and get additive model only
+# Refine QTL positions
 # Here I chose a model 2 with pLOD = -1.451
 # even though it's not the largest pLOD 
 # to illustrate analyses of the interaction in later steps
@@ -153,13 +155,15 @@ sink()
 # Q4   8  98.63018
 # Formula: y ~ Q1 + Q2 + Q3 + Q4 + Q3:Q4 
 # pLOD:  -1.451 
-make_qtl =makeqtl(cross=cross_inputcross, 
+make_qtl = makeqtl(cross=cross_inputcross, 
                    chr=c(1,6,2,8),
                    pos=c(117.64908,89.02274,121.63643,98.63018))
+
+qtl_formula = y ~ Q1 + Q2 + Q3 + Q4 + Q3:Q4
+
 model_chosen = 2
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<#
 ################################################################################
-
 model_stat_directory = paste0("./model_", model_chosen)
 dir.create(file.path(model_stat_directory))
 setwd(file.path(model_stat_directory))
@@ -168,6 +172,7 @@ setwd(file.path(model_stat_directory))
 refine_qtl = refineqtl(cross = cross_inputcross,
                         pheno.col=phenotype,
                         qtl = make_qtl,
+                        formula = qtl_formula,
                         incl.markers=TRUE,
                         keeplodprofile=TRUE)
 
@@ -226,10 +231,10 @@ cat("Refined QTL from chosen model (within model selection) with pLOD for phenot
 cat(phenotype)
 cat("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
 cat("Fit model statistics\n\n")
-print(summary(fitqtl(cross=cross_inputcross, pheno.col=phenotype, qtl=refine_qtl)))
+print(summary(fitqtl(cross=cross_inputcross, pheno.col=phenotype, qtl=refine_qtl, formula = qtl_formula)))
 cat("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n")
 cat("LOD 2 intervals of the QTL model\n\n")
-for(qtl in 1:length(refine_qtl$name)){
+for(qtl in 1:length(refine_qtl$name)){ 
   cat("Q")
   cat(i)
   cat("\n")
@@ -237,7 +242,25 @@ for(qtl in 1:length(refine_qtl$name)){
   cat("\n")
 }
 cat("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n")
+cat("All lod scores for markers on chromosomes of the QTL model\n\n")
+print(attr(refine_qtl, "lodprofile"))
+cat("\n")
+cat("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n")
 sink()
+
+# plot the qtl model's lod scores
+qtl_model_lod_file_name = paste0("lod_plot_for_model_",
+                                 model_chosen,
+                                 ".png")
+png(file = qtl_model_lod_file_name,  
+    width = 20, 
+    height = 10, 
+    units ="in", 
+    res = 300,
+    g = "white")
+par(mfrow=c(1,1))
+plotLodProfile(refine_qtl)
+dev.off()
 
 ################################################################################
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>#
