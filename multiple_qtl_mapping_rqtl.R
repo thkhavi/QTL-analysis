@@ -236,7 +236,7 @@ cat("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n")
 cat("LOD 2 intervals of the QTL model\n\n")
 for(qtl in 1:length(refine_qtl$name)){ 
   cat("Q")
-  cat(i)
+  cat(qtl)
   cat("\n")
   print(lodint(refine_qtl, qtl.index=qtl , drop=2, expandtomarkers=TRUE))
   cat("\n")
