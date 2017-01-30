@@ -11,7 +11,7 @@ These scripts (save\_crossobject\_rqtl.R, single\_qtl\_mapping\_rqtl.R, multiple
 
 ## Permutations for QTL-analysis
 Scripts to calculate permutations on the Texas A&M Institute for Genome Science & Society High Performance Cluster (tigss-hpc).
-This workflow is specific to the tigss-hpc, however can be modified to be of use elsewhere.
+This workflow is specific to the tigss-hpc architecture, however can be modified to be of use elsewhere.
 ### Input data:
 This takes as input the cross object that is constructed by save\_crossobject\_rqtl.R.
 
