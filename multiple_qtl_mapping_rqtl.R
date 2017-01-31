@@ -2,7 +2,7 @@
 # (Much of this code originates from rqtl.org tutorials.)    
 
 # Load cross object
-load("./R07018xR07020_2017-01-30")
+load("./R07018_R07020_2017-01-30")
 
 # Phenotype: 
 phenotype = c("angle_leaf_3_avg_gh204A_2013_normalized")
