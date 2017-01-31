@@ -1,0 +1,52 @@
+These are some notes on how to set up your system to run the penalty calculation workflow used in downstream QTL-analyses.
+Sandra K. Truong 2017-01-30
+
+Requirements:
+
+TIGSS-HPC account: https://genomics.tamu.edu/register-account-tigss-hpc-cluster
+File Transfer Protocol (e.g. FileZilla): https://filezilla-project.org/
+QTL-analysis penalty scripts from GitHub: https://github.com/thkhavi/QTL-analysis/blob/master/tigss-hpc_rqtl_penalty_folders.zip
+R: https://cran.r-project.org/ (see steps below)
+
+Steps to set up:
+
+1a. Open FileZilla
+2a. Go to File -> Site Manager
+3a. Add New Site
+	Host: tigss-hpc.tamu.edu
+	Port: 
+	Protocol: SFTP - SSH File Transfer Protocol
+	Logon Type: Normal
+	User: {username}
+	Password: {username password}
+4a. Connect to tigss-hpc
+5a. Transfer folders downloaded and modified (see instructions on GitHub) from GitHub on your local computer to your tigss-hpc account:
+	/data/{username}/rqtl_crosses
+	/data/{username}/rqtl_mqm_output
+	/data/{username}/rqtl_mqm_scripts
+6a. Transfer R crossobject saved from save_crossobject_rqtl.R on local computer to your tigss-hpc account:
+	/data/{username}/rqtl_crosses/{crossobject}
+
+1b. Open terminal
+2b. Sign in to TIGSS-HPC
+	$ ssh {username}@tigss-hpc.tamu.edu
+3b. Get R and Rscript binaries (choose R versiof, if necessary, by going to https://cran.r-project.org/):
+	$ mkdir /data/{username}/downloads
+	$ cd /data/{username}/downloads
+	$ wget https://cran.r-project.org/src/base/R-3/R-3.3.2.tar.gz
+	$ tar zxvf R-3.3.2.tar.gz
+	$ cd /data/{username}/downloads/R-3.3.2
+4b. Compile R and Rscript on head node:
+	$ exit
+	$ ./compile
+	$ make
+5b. Install R/qtl package in R
+	$ /data/thkhavi/downloads/R-3.3.2/bin/Rscript
+	$ install.packages(qtl)
+	$ quit()
+
+After these steps are complete, the workflow from https://github.com/thkhavi/QTL-analysis can be followed.
+
+
+
+
