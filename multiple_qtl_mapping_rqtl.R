@@ -2,7 +2,7 @@
 # (Much of this code originates from rqtl.org tutorials.)    
 
 # Load cross object
-load("./R07018xR07020")
+load("./R07018xR07020_2017-01-30")
 
 # Phenotype: 
 phenotype = c("angle_leaf_3_avg_gh204A_2013_normalized")
@@ -38,60 +38,6 @@ setwd(file.path(phenotype_directory))
 # all models traversed
 thetrace = attr(stepout2, "trace")
 
-# model selection traversal images
-model_plot_directory = "./model_plots"
-dir.create(file.path(model_plot_directory))
-setwd(file.path(model_plot_directory))
-
-i_models_in_row = 2
-i_models_in_columns = 1
-
-model_selection_i_file_name = paste0("models_",
-                                     1,
-                                     "-",
-                                     (1+(i_models_in_row * i_models_in_columns)-1),
-                                     ".png")
-
-
-png(file = model_selection_i_file_name,  
-    width = 6.5,
-    height = 9, 
-    units ="in", 
-    res = 300, 
-    bg = "white")
-
-par(mfrow=c(i_models_in_row,i_models_in_columns))
-
-i_models_in_image = 0
-for(i in seq(along=thetrace)){
-  if ((i_models_in_row * i_models_in_columns) == i_models_in_image){
-    dev.off()
-    i_models_in_image = 0
-    model_selection_i_file_name = paste0("models_",
-                                         i,
-                                         "-",
-                                         (i+(i_models_in_row * i_models_in_columns)-1),
-                                         ".png")
-    png(file = model_selection_i_file_name,  
-        width = 6.5, 
-        height = 9, 
-        units ="in",
-        res = 300, 
-        bg = "white")
-    par(mfrow=c(i_models_in_row,i_models_in_columns))
-    
-  }
-  plotModel(thetrace[[i]], 
-            chronly=FALSE, 
-            circrad.rel=0.5, 
-            col = "thistle1", 
-            main = paste("model", i, ": pLOD =", round(attr(thetrace[[i]], "pLOD"), 2)))
-  i_models_in_image = i_models_in_image + 1
-  
-}
-dev.off()
-setwd("../")
-
 # Make file for model selection of best fit model
 all_pLOD_model_file_name = paste0("pLOD_models_", phenotype, ".txt")
 sink(file = all_pLOD_model_file_name)
@@ -102,117 +48,40 @@ print(thetrace)
 cat("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n")
 sink()
 
-################################################################################
-#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>#
-# Choose a model to examine from "pLOD_models_file"
-# Refine QTL positions
-# Here I chose a model 2 with pLOD = -1.451
-# even though it's not the largest pLOD 
-# to illustrate analyses of the interaction in later steps
-# Q#  chr pos
-# chr       pos
-# Q1   1 117.64908
-# Q2   6  89.02274
-# Q3   2 121.63643
-# Q4   8  98.63018
-# Formula: y ~ Q1 + Q2 + Q3 + Q4 + Q3:Q4 
-# pLOD:  -1.451 
-make_qtl = makeqtl(cross=cross_inputcross, 
-                   chr=c(1,6,2,8),
-                   pos=c(117.64908,89.02274,121.63643,98.63018))
-
-qtl_formula = y ~ Q1 + Q2 + Q3 + Q4 + Q3:Q4
-
-model_chosen = 2
-#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<#
-################################################################################
-model_stat_directory = paste0("./model_", model_chosen)
-dir.create(file.path(model_stat_directory))
-setwd(file.path(model_stat_directory))
-
-# refine positions of qtl
-refine_qtl = refineqtl(cross = cross_inputcross,
-                        pheno.col=phenotype,
-                        qtl = make_qtl,
-                        formula = qtl_formula,
-                        incl.markers=TRUE,
-                        keeplodprofile=TRUE)
-
-# main qtl phenotype by genotype effect images
-main_effect_directory = file.path("./main_qtl_effect_plot")
-dir.create(file.path(main_effect_directory))
-setwd(file.path(main_effect_directory))
-
-i_QTL_in_row = 4
-i_QTL_in_columns = 1
-
-main_QTL_i_name = paste0(1,
-                         "-",
-                         ((i_QTL_in_row * i_QTL_in_columns)),
-                         ".png")
-png(file = main_QTL_i_name, 
-    width = 6.5, 
-    height = 9, 
-    units ="in", 
-    res = 300, 
-    bg = "white")
-par(mfrow=c(i_QTL_in_row,i_QTL_in_columns))
-
-i_QTL_in_image = 0
-for(i in 1:length(refine_qtl$name)){
-  if ((i_QTL_in_row * i_QTL_in_columns) == i_QTL_in_image){
-    dev.off()
-    i_QTL_in_image = 0
-    main_QTL_i_name = paste(i,
-                            "-",
-                            (i+(i_QTL_in_row * i_QTL_in_columns)-1),
-                            ".png")
-    png(file = main_QTL_i_name,  
-        width = 6.5, 
-        height = 9, 
-        units ="in", 
-        res = 300, 
-        bg = "white")
-    par(mfrow=c(i_QTL_in_row,i_QTL_in_columns))
-  }
-  marker_name = find.marker(cross_inputcross, refine_qtl$chr[i], refine_qtl$pos[i])
-  plotPXG(cross_inputcross, 
-          marker_name, 
-          pheno.col= phenotype)
-  i_QTL_in_image = i_QTL_in_image + 1
-}
-dev.off()
-setwd("../")
+qtl_formula = attr(stepout2, "formula")
 
 # write .txt lod2interval file
 lod2int_file_name = paste0("lod2interval_for_model_",
-                           model_chosen,
+                           phenotype,
                            ".txt")
 sink(file = lod2int_file_name)
 cat("Refined QTL from chosen model (within model selection) with pLOD for phenotype: \n")
 cat(phenotype)
 cat("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
 cat("Fit model statistics\n\n")
-print(summary(fitqtl(cross=cross_inputcross, pheno.col=phenotype, qtl=refine_qtl, formula = qtl_formula)))
+print(summary(fitqtl(cross=cross_inputcross, pheno.col=phenotype, qtl=stepout2, formula = qtl_formula)))
 cat("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n")
 cat("LOD 2 intervals of the QTL model\n\n")
-for(qtl in 1:length(refine_qtl$name)){ 
+for(qtl in 1:length(stepout2$name)){ 
   cat("Q")
   cat(qtl)
   cat("\n")
-  print(lodint(refine_qtl, qtl.index=qtl , drop=2, expandtomarkers=TRUE))
+  print(lodint(stepout2, qtl.index=qtl , drop=2, expandtomarkers=TRUE))
   cat("\n")
 }
-cat("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n")
-cat("All lod scores for markers on chromosomes of the QTL model\n\n")
-print(attr(refine_qtl, "lodprofile"))
-cat("\n")
-cat("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n")
+sink()
+
+# write lod score of entire model
+lod2int_file_name = paste0("lods_for_multiple-QTL_model_",
+                           phenotype,
+                           ".txt")
+sink(file = lod2int_file_name)
+print(attr(stepout2, "lodprofile"))
 sink()
 
 # plot the qtl model's lod scores
-qtl_model_lod_file_name = paste0("lod_plot_for_model_",
-                                 model_chosen,
+qtl_model_lod_file_name = paste0("lod_plot_for_multiple-QTL_model_",
+                                 phenotype,
                                  ".png")
 png(file = qtl_model_lod_file_name,  
     width = 20, 
@@ -221,61 +90,7 @@ png(file = qtl_model_lod_file_name,
     res = 300,
     g = "white")
 par(mfrow=c(1,1))
-plotLodProfile(refine_qtl)
+plotLodProfile(stepout2, showallchr=TRUE)
 dev.off()
 
-################################################################################
-#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>#
-################################################################################
-# If there were interactions from the model selected; output respective plots: #
-################################################################################
-# In this case there was an interaction between Q3 and Q7
-# Formula: y ~ Q1 + Q2 + Q3 + Q4 + Q3:Q4 
-# Change to reflect QTL that have interactions:
-QTL_a = 3
-QTL_b = 4
-#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<#
-################################################################################
-
-interaction_directory = paste0("./interaction_", refine_qtl$name[QTL_a], "-", refine_qtl$name[QTL_b])
-dir.create(file.path(interaction_directory))
-setwd(file.path(interaction_directory))
-
-# effect/interaction plot
-i_effects_in_row = 1
-i_effects_in_columns = 2
-
-effect_plot_file_name = paste0("effect_",
-                                    refine_qtl$name[QTL_a],
-                                    "-", 
-                                    refine_qtl$name[QTL_b], 
-                                    ".png")
-png(file = effect_plot_file_name,  
-    width = 20, 
-    height = 10, 
-    units ="in", 
-    res = 300,
-    g = "white")
-par(mfrow=c(i_effects_in_row,i_effects_in_columns))
-effectplot(cross_inputcross,pheno.col=phenotype,mname1=refine_qtl$name[QTL_a],mname2=refine_qtl$name[QTL_b])
-effectplot(cross_inputcross,pheno.col=phenotype,mname1=refine_qtl$name[QTL_b],mname2=refine_qtl$name[QTL_a])
-dev.off()
-
-# phenotype by the two genotype plots
-pxg_plot_file_name = paste0("pxg_",
-                            refine_qtl$name[QTL_a],
-                            "-",
-                            refine_qtl$name[QTL_b],
-                            ".png")
-png(file = pxg_plot_file_name,  
-    width = 20, 
-    height = 10, 
-    units ="in", 
-    res = 300, 
-    bg = "white")
-plotPXG(x = cross_inputcross,
-        pheno.col = phenotype,
-        marker = c(find.marker(cross_inputcross,refine_qtl$chr[QTL_a],refine_qtl$pos[QTL_a]), 
-                   find.marker(cross_inputcross,refine_qtl$chr[QTL_b],refine_qtl$pos[QTL_b])))
-dev.off()
-setwd("../../")
+setwd("../")
