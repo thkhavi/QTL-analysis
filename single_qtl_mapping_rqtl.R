@@ -13,7 +13,7 @@ phenotype_list = c("angle_leaf_3_avg_gh204A_2013_normalized",
 
 alpha_value = 0.05
 number_permutations = 25000
-main_permutation_threshold = 3.205457
+main_permutation_threshold = 3.679856
 
 library(qtl)
 
