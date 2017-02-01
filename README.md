@@ -18,9 +18,9 @@ Permutation bash scripts found in the tigss-hpc\_rqtl\_penalty\_folders.zip are 
  1. Modify parameters and filenames in folders:
     * /data/{username}/rqtl\_crosses/
     * /data/{username}/rqtl\_mqm\_scripts/
- 2. Submit jobs ($ ./data/rqtl\_mqm\_scripts/run\_two-dimensional\_scans\_job\_array\_{crossname}.sh)
- 3. Combine penalties ($ ./data/rqtl\_mqm\_scripts/run\_combine\_scans\_{crossname}.sh)
- 4. Get penalty scores from ($ vim /data/rqtl\_mqm\_output/{crossname}//mqm\_scantwo\_penalties/0p05\_penalities.txt)
+ 2. Submit jobs (`$ ./data/rqtl\_mqm\_scripts/run\_two-dimensional\_scans\_job\_array\_{crossname}.sh`)
+ 3. Combine penalties (`$ ./data/rqtl\_mqm\_scripts/run\_combine\_scans\_{crossname}.sh`)
+ 4. Get penalty scores from (`$ vim /data/rqtl\_mqm\_output/{crossname}//mqm\_scantwo\_penalties/0p05\_penalities.txt`)
 3. Run single-QTL mapping with single\_qtl\_mapping\_rqtl.R with 
  * crossobject from step 1 
  * main penalties from step 2
