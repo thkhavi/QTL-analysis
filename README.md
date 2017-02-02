@@ -20,7 +20,7 @@ Permutation bash scripts found in the tigss-hpc\_rqtl\_penalty\_folders.zip are 
     * /data/{username}/rqtl\_mqm\_scripts/
  2. Submit jobs (`$ ./data/rqtl_mqm_scripts/run_two-dimensional_scans_job_array_{crossname}.sh`)
  3. Combine penalties (`$ ./data/rqtl_mqm_scripts/run_combine_scans_{crossname}.sh`)
- 4. Get penalty scores from (`$ vim /data/rqtl_mqm_output/{crossname}//mqm_scantwo_penalties/0p05_penalities.txt`)
+ 4. Get penalty scores from (`$ vim /data/rqtl_mqm_output/{crossname}/mqm_scantwo_penalties/0p05_penalities.txt`)
 3. Run single-QTL mapping with single\_qtl\_mapping\_rqtl.R with 
  * crossobject from step 1 
  * main penalties from step 2
