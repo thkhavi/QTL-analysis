@@ -38,4 +38,4 @@ cross_inputcross = calc.genoprob(cross_inputcross,
 cross_inputcross = sim.geno(cross_inputcross, 
                             map.function = "haldane")
 
-save(cross_inputcross, file="R07018xR07020")
+save(cross_inputcross, file="R07018_R07020_2017-01-30")
