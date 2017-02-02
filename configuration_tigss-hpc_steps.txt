@@ -38,10 +38,10 @@ Steps to set up:
 	$ cd /data/{username}/downloads/R-3.3.2
 4b. Compile R and Rscript on head node:
 	$ exit
-	$ ./compile
+	$ ./configure
 	$ make
 5b. Install R/qtl package in R
-	$ /data/thkhavi/downloads/R-3.3.2/bin/Rscript
+	$ ./data/thkhavi/downloads/R-3.3.2/bin/R
 	$ install.packages(qtl)
 	$ quit()
 
